@@ -7,13 +7,16 @@ public class test : MonoBehaviour
     [System.Serializable]
     public class PathSettings
     {
-        public Transform[] top_paths;
-        public Transform[] bottom_paths;
-        public Transform[] right_paths;
+        public Transform[] topPaths;
+        public Transform[] bottomPaths;
+        public Transform[] rightPaths;
     }
 
     [SerializeField]
     public PathSettings paths;
+
+    public float moveSpeed = 0f;
+    public float rotSpeed = 0f;
 
     void OnEnable()
     {
@@ -30,18 +33,20 @@ public class test : MonoBehaviour
 
     IEnumerator MovePath()
     {
-        int path_index = 0;
+        int pathIndex = 0;
 
-        while (path_index < paths.top_paths.Length)
+        while (pathIndex < paths.topPaths.Length)
         {
+            Vector3 dir = paths.topPaths[pathIndex].position - transform.position;
+            Quaternion q = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Lerp(transform.rotation, q, Time.deltaTime * rotSpeed);
             // 이동
-            transform.LookAt(paths.top_paths[path_index]);
-            transform.Translate(0f, 0f, Time.deltaTime * 10f);
+            transform.Translate(0f, 0f, Time.deltaTime * moveSpeed);
 
             // 거리 같아지면 다음으로 이동
-            if (Vector3.Distance(transform.position, paths.top_paths[path_index].position) < 1f)
+            if (Vector3.Distance(transform.position, paths.topPaths[pathIndex].position) < 1f)
             {
-                path_index++;
+                pathIndex++;
             }
 
             yield return null;
